@@ -1,0 +1,16 @@
+# Standards: 0.1
+---
+- name: Kill xscope
+  command: killall xScope
+  register: xscope_kill
+  failed_when: xscope_kill.rc != 0 and "No matching processes belonging to you were found" not in xscope_kill.stderr
+  become: "{{ (xscope_user != ansible_user_id) | bool }}"
+  become_user: "{{ xscope_user }}"
+
+- name: Start xscope
+  when: xscope_started
+  command: open -g /Applications/xScope.app
+  become: "{{ (xscope_user != ansible_user_id) | bool }}"
+  become_user: "{{ xscope_user }}"
+
+...

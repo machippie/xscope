@@ -1,0 +1,10 @@
+# Standards: 0.1
+---
+# @var xscope_user:description: User to run user-specific commands
+# @var xscope_user:value: xscope_user | default(homebrew_user) | default(ansible_user_id)
+# xscope_user:
+
+# @var xscope_started:description: Start in background after install
+xscope_started: True
+
+...

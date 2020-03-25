@@ -1,0 +1,31 @@
+# Standards: 0.1
+---
+- name: Fact xscope user
+  set_fact:
+    xscope_user: "{{ xscope_user | default(homebrew_user) | default(ansible_user_id) }}"
+  tags:
+    - xscope
+
+- become: "{{ (xscope_user != ansible_user_id) | bool }}"
+  become_user: "{{ xscope_user }}"
+  block:
+    - name: Install required package
+      ignore_errors: True
+      homebrew_cask:
+        name: xscope
+        greedy: True
+        options: appdir=/Applications
+        accept_external_apps: False
+        state: upgraded
+      tags:
+        - xscope
+
+- name: Remove quarantine flag
+  register: xscope_quarantine
+  failed_when: xscope_quarantine.rc != 0 and "No such xattr" not in xscope_quarantine.stderr
+  changed_when: xscope_quarantine.rc == 0
+  command: xattr -d com.apple.quarantine /Applications/xScope.app
+  tags:
+    - xscope
+
+...
